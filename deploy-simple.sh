@@ -22,21 +22,21 @@ sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsF
 echo "💾 Creating backup of current site..."
 BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
+  cd $SERVER_PATH
   tar -czf $BACKUP_DIR/$BACKUP_NAME.tar.gz \
-    -C $SERVER_PATH \
     wp-content/themes/ \
     .htaccess \
     wp-config.php \
     index.php \
-    wp-*.php \
-    xmlrpc.php
+    wp-*.php 2>/dev/null || true \
+    xmlrpc.php 2>/dev/null || true
 "
 
 # Upload only essential files to server
 echo "📤 Uploading essential files to server..."
 
 # 1. Upload root configuration files
-echo "📁 Uploading root configuration files..."
+echo "�� Uploading root configuration files..."
 sshpass -p "$SERVER_PASSWORD" rsync -avz \
   --exclude='.git' \
   --exclude='.gitignore' \
