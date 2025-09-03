@@ -48,6 +48,10 @@ sshpass -p "$SERVER_PASSWORD" rsync -avz --delete \
 echo "⚙️  Setting up wp-config.php..."
 sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts wp-config-production.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
 
+# Copy production .htaccess
+echo "⚙️  Setting up .htaccess..."
+sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts .htaccess.remote $SERVER_USER@$SERVER_IP:$SERVER_PATH/.htaccess
+
 # Fix database credentials and security keys in wp-config.php
 echo "🔧 Fixing database credentials and security keys..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
