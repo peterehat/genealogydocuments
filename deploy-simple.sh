@@ -14,6 +14,12 @@ SERVER_PASSWORD="${DO_SERVER_PASSWORD}"
 SERVER_PATH="/var/www/html"
 BACKUP_DIR="/var/backups/wordpress"
 
+# Enable WordPress maintenance mode
+echo "🔧 Enabling WordPress maintenance mode..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
+  echo '<?php \$upgrading = '$(date +%s)'; ?>' > $SERVER_PATH/.maintenance
+"
+
 # Create backup directory if it doesn't exist
 echo "📦 Creating backup directory..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "mkdir -p $BACKUP_DIR"
@@ -36,7 +42,7 @@ sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsF
 echo "📤 Uploading essential files to server..."
 
 # 1. Upload root configuration files
-echo "�� Uploading root configuration files..."
+echo "📁 Uploading root configuration files..."
 sshpass -p "$SERVER_PASSWORD" rsync -avz \
   --exclude='.git' \
   --exclude='.gitignore' \
@@ -96,6 +102,12 @@ sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsF
   if [ -d '$SERVER_PATH/wp-content/cache' ]; then
     rm -rf $SERVER_PATH/wp-content/cache/*
   fi
+"
+
+# Disable WordPress maintenance mode
+echo "🔧 Disabling WordPress maintenance mode..."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
+  rm -f $SERVER_PATH/.maintenance
 "
 
 # Test the site
