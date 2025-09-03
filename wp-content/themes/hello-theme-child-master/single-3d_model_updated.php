@@ -350,7 +350,7 @@ get_header(); ?>
 
         // Create Scene
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff); // Set white background immediately
+        scene.background = new THREE.Color(0xeeeeee); // Set white background immediately
         
 
         // Set Camera
@@ -364,36 +364,35 @@ get_header(); ?>
         
         // Enhanced renderer settings for better brightness (similar to glb.ee)
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.2;
+        renderer.toneMappingExposure = 0.9;
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        
+        renderer.physicallyCorrectLights = true;        
         container.appendChild(renderer.domElement);
 
-        // Enhanced Lighting Setup (similar to glb.ee)
+        // Enhanced Lighting Setup
         // Main directional light (key light)
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
-        directionalLight.position.set(5, 5, 5);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        directionalLight.position.set(3, 5, 4);
         directionalLight.castShadow = true;
         scene.add(directionalLight);
 
         // Fill light from the opposite side
-        const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        const fillLight = new THREE.DirectionalLight(0xeaf2ff, 0.4);
         fillLight.position.set(-5, 3, -5);
         scene.add(fillLight);
 
         // Rim light for better edge definition
-        const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        const rimLight = new THREE.DirectionalLight(0xfff1e0, 0.25);
         rimLight.position.set(0, 5, -5);
         scene.add(rimLight);
 
-        // Increased ambient light for overall brightness
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+        // Ambient light (disabled)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0);
         scene.add(ambientLight);
 
-        // Additional hemisphere light for more natural lighting
-        const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+        // Hemisphere light for natural lighting
+        const hemisphereLight = new THREE.HemisphereLight(0xdfe6f0, 0x2a2a2a, 0.25);
         scene.add(hemisphereLight);
-
         // Orbit Controls (User Can Rotate & Zoom Smoothly)
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true; // Smooth movement
