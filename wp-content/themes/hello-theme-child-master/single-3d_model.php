@@ -348,6 +348,9 @@
     });
 </script>
 
+<!-- Model Viewer Script -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById('threejs-container');
@@ -357,147 +360,215 @@
             return;
         }
 
-        let camera, controls, renderer, scene, model;
-
-        // Create Scene
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xeeeeee); // Set white background immediately
-        
-
-        // Set Camera
-        camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 2); // Adjust camera closer
-
-        // Create Renderer
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0xeeeeee, 1);
-        
-        // Enhanced renderer settings for better brightness (similar to glb.ee)
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
-        renderer.physicallyCorrectLights = true;        
-        container.appendChild(renderer.domElement);
-
-        // Enhanced Lighting Setup
-        // Main directional light (key light)
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
-        directionalLight.position.set(3, 5, 4);
-        directionalLight.castShadow = true;
-        scene.add(directionalLight);
-
-        // Fill light from the opposite side
-        const fillLight = new THREE.DirectionalLight(0xeaf2ff, 0.5);
-        fillLight.position.set(-5, 3, -5);
-        scene.add(fillLight);
-
-        // Rim light for better edge definition
-        const rimLight = new THREE.DirectionalLight(0xfff1e0, 0.6);
-        rimLight.position.set(0, 5, -5);
-        scene.add(rimLight);
-
-        // Ambient light for subtle fill
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
-
-        // Hemisphere light for natural lighting
-        const hemisphereLight = new THREE.HemisphereLight(0xdfe6f0, 0x2a2a2a, 0.4);
-        scene.add(hemisphereLight);
-        // Orbit Controls (User Can Rotate & Zoom Smoothly)
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // Smooth movement
-        controls.dampingFactor = 0.1; // Damping effect
-        controls.enableZoom = true; // Enable zoom
-        controls.minDistance = 0.5; // Minimum zoom
-        controls.maxDistance = 10; // Maximum zoom
-        controls.rotateSpeed = 0.8; // Adjust rotation speed
-        controls.zoomSpeed = 0.5; // Adjust zoom speed
-        controls.update();
-
-        // Create Loader Element
-        const loaderElement = document.createElement('div');
-        loaderElement.id = 'loader';
-        loaderElement.innerHTML = `<img src='http://104.248.108.38/wp-content/uploads/2025/02/loader.gif' alt='Loading...'>`;
-        loaderElement.style.position = 'absolute';
-        loaderElement.style.top = '50%';
-        loaderElement.style.left = '50%';
-        loaderElement.style.transform = 'translate(-50%, -50%)';
-        loaderElement.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-        loaderElement.style.padding = '20px';
-        loaderElement.style.borderRadius = '10px';
-        container.appendChild(loaderElement);
-
-        // DRACO Loader for Compressed Models
-        const dracoLoader = new THREE.DRACOLoader();
-        dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
-
-        // GLTF Model Loader
-        const loader = new THREE.GLTFLoader();
-        loader.setDRACOLoader(dracoLoader);
-
+        // Model-viewer setup (replaces Three.js)        
+        // Replace Three.js canvas with model-viewer
         const modelUrl = "<?php echo esc_url(get_field('upload_three_dimensional_scans') ?: ''); ?>";
 
         if (!modelUrl || modelUrl === 'false') {
             console.error('Error: Model URL is empty or invalid:', modelUrl);
-        } else {
+            container.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;">No 3D model found in this post.</div>';
+            return;
+        }
+
             console.log('Loading Model from:', modelUrl);
 
-            loader.load(modelUrl, function (gltf) {
-                model = gltf.scene;
+        // Replace container content with model-viewer
+        container.innerHTML = `
+            <model-viewer 
+                id="model-viewer"
+                src="${modelUrl}"
+                alt="3D Model"
+                auto-rotate
+                camera-controls
+                shadow-intensity="0"
+                exposure="1.8"
+                tone-mapping="neutral"
+                style="width: 100%; height: 100%; background-color: #f3f5f6;">
+                
+                <!-- Loading indicator -->
+                <div class="loading" slot="progress-bar">
+                    <div class="loading-bar"></div>
+                </div>
+                
+                <!-- Error message -->
+                <div class="error" slot="error">
+                    <p>Sorry, this 3D model could not be loaded.</p>
+                </div>
+            </model-viewer>
+        `;
 
-                // Center the model
-                const box = new THREE.Box3().setFromObject(model);
-                const center = new THREE.Vector3();
-                box.getCenter(center);
-                model.position.sub(center); // Center the model
-                scene.add(model);
+        // Wait for model-viewer to be defined before setting up event listeners
+        const setupModelViewer = () => {
+            const modelViewer = document.querySelector('#model-viewer');
+            if (modelViewer && typeof modelViewer.addEventListener === 'function') {
+                console.log('Model-viewer is ready, setting up event listeners');
+                
+                modelViewer.addEventListener('load', function() {
+                    console.log('Model loaded successfully');
+                    // Hide the loading bar when model loads
+                    const loadingBar = modelViewer.querySelector('.loading');
+                    if (loadingBar) {
+                        loadingBar.style.display = 'none';
+                    }
+                    
+                    // Center the current model in the carousel
+                    centerCurrentModelInCarousel();
+                });
+                
+                modelViewer.addEventListener('error', function(event) {
+                    console.error('Model loading error:', event.detail);
+                });
+                
+                modelViewer.addEventListener('progress', function(event) {
+                    const progress = event.detail.totalProgress;
+                    console.log('Loading progress:', Math.round(progress * 100) + '%');
+                });
+            } else {
+                console.log('Model-viewer not ready yet, retrying...');
+                setTimeout(setupModelViewer, 100);
+            }
+        };
 
-                // Get bounding box dimensions
-                const size = new THREE.Vector3();
-                box.getSize(size);
-                const maxDimension = Math.max(size.x, size.y, size.z);
+        // Wait a bit for the DOM to update, then start checking
+        setTimeout(setupModelViewer, 100);
 
-                let idealDistance = maxDimension * 3; // Default for desktop
-
-                // 📱 Mobile: Increase zoom-out distance
-                if (window.innerWidth < 768) { 
-                    idealDistance = maxDimension * 4; // Just zoom out more on mobile
+        // Function to center the current model in the carousel
+        function centerCurrentModelInCarousel() {
+            console.log('Attempting to center current model in carousel...');
+            
+            // Get the current post ID (same as the existing carousel code)
+            const currentPostId = <?php echo json_encode(get_the_ID()); ?>;
+            console.log('Current post ID:', currentPostId);
+            
+            // Wait for Slick to be ready
+            setTimeout(() => {
+                if (window.jQuery && window.jQuery.fn.slick) {
+                    const $slider = window.jQuery('.slider-nav');
+                    
+                    // Find the slide with the current post ID
+                    const currentSlide = $slider.find(`[data-post-id="${currentPostId}"]`);
+                    console.log('Current slide found:', currentSlide.length > 0);
+                    
+                    if (currentSlide.length > 0) {
+                        console.log('Current slide element:', currentSlide[0]);
+                        console.log('Current slide classes:', currentSlide.attr('class'));
+                        
+                        // Get the slick index of the current slide
+                        let slideIndex = currentSlide.data('slick-index');
+                        console.log('Slide index from data:', slideIndex);
+                        
+                        // If data-slick-index is not available, find it manually
+                        if (slideIndex === undefined) {
+                            const allSlides = $slider.find('.slick-slide');
+                            console.log('Total slides found:', allSlides.length);
+                            console.log('All slide elements:', allSlides);
+                            
+                            // Try different approaches to find the index
+                            slideIndex = allSlides.index(currentSlide);
+                            console.log('Slide index from manual search:', slideIndex);
+                            
+                            // Alternative: search by data-post-id in all slides
+                            if (slideIndex === -1) {
+                                allSlides.each(function(index) {
+                                    if ($(this).find('[data-post-id]').data('post-id') == currentPostId) {
+                                        slideIndex = index;
+                                        console.log('Found slide by data-post-id at index:', index);
+                                        return false; // break the loop
+                                    }
+                                });
+                            }
+                        }
+                        
+                        if (slideIndex !== undefined && slideIndex >= 0) {
+                            // Center the current slide
+                            $slider.slick('slickGoTo', slideIndex);
+                            console.log('Centered current model in carousel at index:', slideIndex);
+                            
+                            // Add visual highlighting
+                            $slider.find('.slick-slide').removeClass('current-model');
+                            currentSlide.addClass('current-model');
+                        } else {
+                            console.log('Could not determine slide index, trying alternative approach...');
+                            
+                            // Alternative: try to find by post title or other attributes
+                            const postTitle = '<?php echo get_the_title(); ?>';
+                            console.log('Looking for post title:', postTitle);
+                            
+                            $slider.find('.slick-slide').each(function(index) {
+                                const slideTitle = $(this).find('h3, .title, [data-title]').text().trim();
+                                console.log('Slide', index, 'title:', slideTitle);
+                                if (slideTitle === postTitle) {
+                                    $slider.slick('slickGoTo', index);
+                                    $(this).addClass('current-model');
+                                    console.log('Found and centered by title at index:', index);
+                                    return false;
+                                }
+                            });
+                        }
+                    } else {
+                        console.log('Current slide not found in carousel');
+                    }
+                } else {
+                    console.log('jQuery or Slick not available');
                 }
-
-                // Update Camera Position
-                camera.position.set(0, 0, idealDistance);
-                controls.minDistance = maxDimension * 0.1; // Very close zoom-in
-                controls.maxDistance = idealDistance * 10; // Extremely far zoom-out
-                controls.enableZoom = true;
-                controls.zoomSpeed = 1.5; // Increase zoom sensitivity
-                controls.update();
-
-                console.log("Model Size:", size, "Ideal Distance:", idealDistance);
-
-                // Hide Loader After Model Loads
-                if (loaderElement) {
-                    loaderElement.style.display = 'none';
-                }
-            }, undefined, function (error) {
-                console.error('Error loading model:', error);
-            });
+            }, 1000); // Wait 1 second for Slick to be fully initialized
         }
 
-        // Resize Handler
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        });
+        // Add loading styles for model-viewer
+        const style = document.createElement('style');
+        style.textContent = `
+            .loading {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 200px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+            
+            .loading-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #007bff, #0056b3);
+                border-radius: 2px;
+                animation: loading 2s ease-in-out infinite;
+            }
+            
+            @keyframes loading {
+                0% { width: 0%; }
+                50% { width: 70%; }
+                100% { width: 100%; }
+            }
+            
+            .error {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(220, 53, 69, 0.9);
+                color: white;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+            }
+            
+            /* Style for current model in carousel */
+            .slider-nav .slick-slide.current-model {
+                border: 2px solid #007bff !important;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+            }
+            
+            .slider-nav .slick-slide.current-model h3 {
+                color: #007bff !important;
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
 
-        // Animate Function (No Auto-Rotate, Only User Control)
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update(); // Keep controls smooth
-            renderer.render(scene, camera);
-        }
-        animate();
+
     });
 </script>
 

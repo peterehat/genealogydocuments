@@ -370,28 +370,28 @@ get_header(); ?>
         container.appendChild(renderer.domElement);
 
         // Enhanced Lighting Setup
-        // Main directional light (key light)
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        // Main directional light (key light) - reduced intensity to minimize shadows
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
         directionalLight.position.set(3, 5, 4);
-        directionalLight.castShadow = true;
+        directionalLight.castShadow = false; // Disable shadows to reduce harshness
         scene.add(directionalLight);
 
         // Fill light from the opposite side
-        const fillLight = new THREE.DirectionalLight(0xeaf2ff, 0.5);
+        const fillLight = new THREE.DirectionalLight(0xeaf2ff, 1.5);
         fillLight.position.set(-5, 3, -5);
         scene.add(fillLight);
 
         // Rim light for better edge definition
-        const rimLight = new THREE.DirectionalLight(0xfff1e0, 0.6);
+        const rimLight = new THREE.DirectionalLight(0xfff1e0, 1.0);
         rimLight.position.set(0, 5, -5);
         scene.add(rimLight);
 
-        // Ambient light for subtle fill
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        // Ambient light for subtle fill - increased to fill shadows
+        const ambientLight = new THREE.AmbientLight(0xffffff, 4.5);
         scene.add(ambientLight);
 
         // Hemisphere light for natural lighting
-        const hemisphereLight = new THREE.HemisphereLight(0xdfe6f0, 0x2a2a2a, 0.4);
+        const hemisphereLight = new THREE.HemisphereLight(0xdfe6f0, 0x2a2a2a, 2.5);
         scene.add(hemisphereLight);
         // Orbit Controls (User Can Rotate & Zoom Smoothly)
         controls = new THREE.OrbitControls(camera, renderer.domElement);

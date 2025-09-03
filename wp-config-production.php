@@ -22,10 +22,10 @@ define( 'DB_NAME', 'defaultdb' );
 define( 'DB_USER', 'doadmin' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', 'YOUR_DATABASE_PASSWORD' );
+define( 'DB_PASSWORD', 'YOUR_DB_PASSWORD_HERE' );
 
 /** MySQL hostname */
-define( 'DB_HOST', 'YOUR_DATABASE_HOST' );
+define( 'DB_HOST', 'genealogydocuments-db-do-user-25354054-0.l.db.ondigitalocean.com:25060' );
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8mb4' );
@@ -42,14 +42,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         'GENERATE_YOUR_OWN_AUTH_KEY' );
-define( 'SECURE_AUTH_KEY',  'GENERATE_YOUR_OWN_SECURE_AUTH_KEY' );
-define( 'LOGGED_IN_KEY',    'GENERATE_YOUR_OWN_LOGGED_IN_KEY' );
-define( 'NONCE_KEY',        'GENERATE_YOUR_OWN_NONCE_KEY' );
-define( 'AUTH_SALT',        'GENERATE_YOUR_OWN_AUTH_SALT' );
-define( 'SECURE_AUTH_SALT', 'GENERATE_YOUR_OWN_SECURE_AUTH_SALT' );
-define( 'LOGGED_IN_SALT',   'GENERATE_YOUR_OWN_LOGGED_IN_SALT' );
-define( 'NONCE_SALT',       'GENERATE_YOUR_OWN_NONCE_SALT' );
+define( 'AUTH_KEY',         '|PE{<4W*E7uSd5}HGpAd]JE-pS+Go#>@p7Tp)4:/g0;/g8(]  bKney$Q:{U2 g{' );
+define( 'SECURE_AUTH_KEY',  's+Q)Rk2OPy{[.}.zv.t=;lq6Wg~wFou_=>FN@THVr(*]-`nXZZgWu~5Q%yB7Rmqc' );
+define( 'LOGGED_IN_KEY',    '.<`DOU;Q/MbqZU^[$3Ra.htv~r5<O->)A>:35=uTBxDW#;XppN]YP+ce;wXXOSL+' );
+define( 'NONCE_KEY',        '1X-r=DnAU55_fxGXEunJRC`:c<v@fKW#K=}e/`` 2)&4reLY@l9W.^rRm||R@bc*' );
+define( 'AUTH_SALT',        '!/>z=7N>-Wl=wp>Oe)C-Zdza-R1x`8X9Uvn|n/*Z>_pS@u76}Fp?+anLP_t!ca^x' );
+define( 'SECURE_AUTH_SALT', '~NLaBA<T(z*VmAy):n0mUX@{ti@L0y=&c`&a7Bk|ufJ~@hrPWz?6<>1zijn7,(2M' );
+define( 'LOGGED_IN_SALT',   'Q_Et.K$px(Q(l=(JTQ8Bn9A$NTyGA?SyoWeBs*7hV9QH1]Yu!7,{m#bUc.@Pt.(/' );
+define( 'NONCE_SALT',       'N2#Y*y%1D&+E,X<|H1t`2[L,hW/`rXUN{|`fQHSLrO%N7hx)?_-TwN_HEqr&I@;`' );
 
 /**#@-*/
 
