@@ -14,24 +14,14 @@ SERVER_PASSWORD="${DO_SERVER_PASSWORD}"
 SERVER_PATH="/var/www/html"
 BACKUP_DIR="/var/backups/wordpress"
 
-# Create SSH directory and known_hosts file
-echo "🔑 Setting up SSH configuration..."
-mkdir -p ~/.ssh
-touch ~/.ssh/known_hosts
-chmod 600 ~/.ssh/known_hosts
-
-# Add server to known hosts
-echo "🔑 Adding server to known hosts..."
-ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts 2>/dev/null || true
-
 # Create backup directory if it doesn't exist
 echo "📦 Creating backup directory..."
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "mkdir -p $BACKUP_DIR"
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "mkdir -p $BACKUP_DIR"
 
 # Create backup of current site (only essential files)
 echo "💾 Creating backup of current site..."
 BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
   tar -czf $BACKUP_DIR/$BACKUP_NAME.tar.gz \
     -C $SERVER_PATH \
     wp-content/themes/ \
@@ -65,27 +55,27 @@ sshpass -p "$SERVER_PASSWORD" rsync -avz \
   --exclude='wp-content/upgrade/' \
   --exclude='wp-content/upgrade-temp-backup/' \
   --exclude='wp-content/themes/' \
-  -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts" \
+  -e "sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
   ./ $SERVER_USER@$SERVER_IP:$SERVER_PATH/
 
 # 2. Upload theme files
 echo "🎨 Uploading theme files..."
 sshpass -p "$SERVER_PASSWORD" rsync -avz \
   --delete \
-  -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts" \
+  -e "sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
   wp-content/themes/ $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-content/themes/
 
 # Copy production wp-config.php
 echo "⚙️  Setting up wp-config.php..."
-sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts wp-config-production.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
+sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null wp-config-production.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
 
 # Copy production .htaccess
 echo "⚙️  Setting up .htaccess..."
-sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts .htaccess.remote $SERVER_USER@$SERVER_IP:$SERVER_PATH/.htaccess
+sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null .htaccess.remote $SERVER_USER@$SERVER_IP:$SERVER_PATH/.htaccess
 
 # Fix database credentials in wp-config.php
 echo "🔧 Fixing database credentials..."
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
   # Fix database credentials
   sed -i \"s/YOUR_DATABASE_HOST/\${DB_HOST:-genealogydocuments-db-do-user-25354054-0.l.db.ondigitalocean.com:25060}/\" $SERVER_PATH/wp-config.php
   sed -i \"s/YOUR_DATABASE_PASSWORD/\${DB_PASSWORD:-AVNS_XP1E14_U_JYFbqaN9l7}/\" $SERVER_PATH/wp-config.php
@@ -93,7 +83,7 @@ sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsF
 
 # Set proper permissions
 echo "🔐 Setting file permissions..."
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
   chown -R www-data:www-data $SERVER_PATH/
   find $SERVER_PATH/ -type d -exec chmod 755 {} +
   find $SERVER_PATH/ -type f -exec chmod 644 {} +
@@ -102,7 +92,7 @@ sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsF
 
 # Clear any caches
 echo "🧹 Clearing caches..."
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
   if [ -d '$SERVER_PATH/wp-content/cache' ]; then
     rm -rf $SERVER_PATH/wp-content/cache/*
   fi
