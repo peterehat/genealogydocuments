@@ -1,9 +1,20 @@
-name: Deploy to Digital Ocean
+name: Deploy to Production
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      skip_backup:
+        description: 'Skip backup creation'
+        required: false
+        default: 'false'
+        type: boolean
+      deploy_all_themes:
+        description: 'Deploy all themes (not just active)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   deploy:
@@ -13,26 +24,46 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+        
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y rsync sshpass
+        sudo apt-get install -y sshpass curl
         
-    - name: Make deploy script executable
-      run: chmod +x deploy.sh
-      
-    - name: Deploy to Digital Ocean
-      run: ./deploy.sh
+    - name: Deploy to server
       env:
-        DO_SERVER_IP: ${{ secrets.DO_SERVER_IP }}
-        DO_SERVER_USER: ${{ secrets.DO_SERVER_USER }}
-        DO_SERVER_PASSWORD: ${{ secrets.DO_SERVER_PASSWORD }}
+        DO_SERVER_IP: ${{ secrets.SERVER_IP }}
+        DO_SERVER_USER: ${{ secrets.SERVER_USER }}
+        DO_SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        SKIP_BACKUP: ${{ github.event.inputs.skip_backup || 'false' }}
+        DEPLOY_ALL_THEMES: ${{ github.event.inputs.deploy_all_themes || 'false' }}
+      run: |
+        chmod +x deploy-advanced.sh
+        ./deploy-advanced.sh
         
     - name: Notify deployment status
       if: always()
       run: |
         if [ ${{ job.status }} == 'success' ]; then
           echo "✅ Deployment successful!"
+          echo "🚀 Site deployed to: https://gendocs.org"
         else
           echo "❌ Deployment failed!"
+          echo "Please check the logs above for details."
         fi
+        
+    - name: Create deployment summary
+      if: always()
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Site URL**: https://gendocs.org" >> $GITHUB_STEP_SUMMARY

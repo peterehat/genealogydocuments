@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "🚀 Starting deployment to Digital Ocean..."
+echo "🚀 Starting optimized deployment to Digital Ocean..."
 
 # Configuration
 SERVER_IP="${DO_SERVER_IP:-167.71.96.206}"
@@ -26,23 +26,50 @@ ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts 2>/dev/null || true
 echo "📦 Creating backup directory..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "mkdir -p $BACKUP_DIR"
 
-# Create backup of current site
+# Create backup of current site (only essential files)
 echo "💾 Creating backup of current site..."
 BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "tar -czf $BACKUP_DIR/$BACKUP_NAME.tar.gz -C $SERVER_PATH ."
+sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+  tar -czf $BACKUP_DIR/$BACKUP_NAME.tar.gz \
+    -C $SERVER_PATH \
+    wp-content/themes/ \
+    .htaccess \
+    wp-config.php \
+    index.php \
+    wp-*.php \
+    xmlrpc.php
+"
 
-# Upload files to server
-echo "📤 Uploading files to server..."
-sshpass -p "$SERVER_PASSWORD" rsync -avz --delete \
+# Upload only essential files to server
+echo "📤 Uploading essential files to server..."
+
+# 1. Upload root configuration files
+echo "📁 Uploading root configuration files..."
+sshpass -p "$SERVER_PASSWORD" rsync -avz \
   --exclude='.git' \
   --exclude='.gitignore' \
   --exclude='deploy.sh' \
   --exclude='wp-config.php' \
+  --exclude='wp-config-sample.php' \
+  --exclude='wp-config-production.php' \
+  --exclude='wp-admin/' \
+  --exclude='wp-includes/' \
+  --exclude='wp-content/plugins/' \
   --exclude='wp-content/uploads/' \
   --exclude='wp-content/cache/' \
   --exclude='wp-content/ai1wm-backups/' \
+  --exclude='wp-content/upgrade/' \
+  --exclude='wp-content/upgrade-temp-backup/' \
+  --exclude='wp-content/themes/' \
   -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts" \
   ./ $SERVER_USER@$SERVER_IP:$SERVER_PATH/
+
+# 2. Upload only the active theme (hello-theme-child-master)
+echo "🎨 Uploading theme files..."
+sshpass -p "$SERVER_PASSWORD" rsync -avz \
+  --delete \
+  -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts" \
+  wp-content/themes/ $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-content/themes/
 
 # Copy production wp-config.php
 echo "⚙️  Setting up wp-config.php..."
