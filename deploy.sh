@@ -40,6 +40,7 @@ sshpass -p "$SERVER_PASSWORD" rsync -avz --delete \
   --exclude='wp-config.php' \
   --exclude='wp-content/uploads/' \
   --exclude='wp-content/cache/' \
+  --exclude='wp-content/ai1wm-backups/' \
   -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts" \
   ./ $SERVER_USER@$SERVER_IP:$SERVER_PATH/
 
@@ -51,7 +52,8 @@ sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsF
 echo "🔐 Setting file permissions..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
   chown -R www-data:www-data $SERVER_PATH/
-  chmod -R 755 $SERVER_PATH/
+  find $SERVER_PATH/ -type d -exec chmod 755 {} +
+  find $SERVER_PATH/ -type f -exec chmod 644 {} +
   chmod 644 $SERVER_PATH/wp-config.php
 "
 
