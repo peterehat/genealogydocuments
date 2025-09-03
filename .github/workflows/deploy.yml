@@ -31,9 +31,9 @@ jobs:
         
     - name: Deploy to server
       env:
-        DO_SERVER_IP: ${{ secrets.SERVER_IP }}
-        DO_SERVER_USER: ${{ secrets.SERVER_USER }}
-        DO_SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        DO_SERVER_IP: ${{ secrets.DO_SERVER_IP }}
+        DO_SERVER_USER: ${{ secrets.DO_SERVER_USER }}
+        DO_SERVER_PASSWORD: ${{ secrets.DO_SERVER_PASSWORD }}
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         SKIP_BACKUP: ${{ github.event.inputs.skip_backup || 'false' }}
