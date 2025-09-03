@@ -1,0 +1,17 @@
+// Modules
+@import 'modules/fonts';
+@import 'modules/variables';
+@import 'modules/normalize';
+@import 'modules/mixins'; 
+
+
+// Partials
+@import 'partials/buttons';
+@import 'modules/slick';
+@import 'partials/slick-override';
+
+//blocks
+@import 'blocks/home_page';
+@import 'blocks/elizabeth_detail';
+
+

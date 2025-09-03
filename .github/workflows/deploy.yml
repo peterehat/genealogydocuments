@@ -1,0 +1,45 @@
+name: Deploy to Digital Ocean
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.DO_SERVER_IP }} >> ~/.ssh/known_hosts
+        
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rsync
+        
+    - name: Make deploy script executable
+      run: chmod +x deploy.sh
+      
+    - name: Deploy to Digital Ocean
+      run: ./deploy.sh
+      env:
+        DO_SERVER_IP: ${{ secrets.DO_SERVER_IP }}
+        DO_SERVER_USER: ${{ secrets.DO_SERVER_USER }}
+        DO_SERVER_PASSWORD: ${{ secrets.DO_SERVER_PASSWORD }}
+        
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "✅ Deployment successful!"
+        else
+          echo "❌ Deployment failed!"
+        fi

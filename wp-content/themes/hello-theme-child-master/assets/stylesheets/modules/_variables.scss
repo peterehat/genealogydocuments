@@ -1,0 +1,38 @@
+// Fonts
+$font-main: montserrat, sans-serif;
+$font-alt: kepler-std, serif;
+$body-font-size:16px;
+
+// Colors
+$black: #000;
+$white: #fff;
+$red: #DF2F2F;
+$light-brown: #FFFBF7;
+
+
+
+// Change the grid settings
+$gutter: 30px;
+$padding:10px;
+$xl-width: 1600px; // large
+$max-width: 1420px; // frame
+$inner-width: 960px; // innerframe
+
+$laptop3X: "(min-width: 1601px)"; //large laptops
+$laptopXL: "(max-width: 1925px)"; // large laptops
+$desktopXL: "(max-width: 1680px)"; // large laptops
+$laptopLargeFrame :"(max-width: 1620px)";
+$laptopL: "(max-width: 1440px)"; // large laptops
+$laptopMM: "(max-width: 1366px)"; // medium laptops
+$laptopM: "(max-width: 1300px)"; // medium laptops
+$laptopS: "(max-width: 1170px)"; // medium laptops
+$laptop: "(max-width: 1024px)"; // laptop
+$laptopSM: "(max-width: 1023px)"; // laptop
+$tabletLL: "(max-width: 991px)";
+$tabletL: "(max-width: 900px)";
+$tablet: "(max-width: 768px)"; // tablet
+$mobileStart: "(max-width: 767px)"; // tablet
+$mobileXL: "(max-width: 650px)"; // tablet
+$mobileL: "(max-width: 425px)"; // small phone
+$mobileM: "(max-width: 375px)"; // small phone
+$mobileS: "(max-width: 320px)"; // small phone

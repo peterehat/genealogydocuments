@@ -1,0 +1,21 @@
+@mixin container() {
+  margin: 0 auto;
+  max-width: $max-width;
+  width: calc(100% - 40px);
+  padding: 0px 20px;
+}
+
+@mixin general-transition {
+    transition: all 0.35s ease-in-out;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin flex-center-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

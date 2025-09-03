@@ -1,0 +1,120 @@
+.header-box{
+    background: $light-brown;
+    padding: 20px;
+    border-bottom: solid 2px #F1D9C0;
+    @include flex-center-between;
+
+    .back-link{
+        @include flex-center;
+        gap:5px;
+        font-size: 20px;
+        color: $black;
+        text-decoration: none;
+
+        img{
+            @include general-transition;
+        }
+
+        &:hover img{
+            transform: translateX(-5px);
+        }
+    }
+    .header-logo{
+        width: 200px;
+        height: auto;
+    }
+}
+.object-detail{
+    display:flex;
+    height: calc(100vh - 82px);
+}
+.object-detail-left{
+    width: calc(100% - 400px);
+    border-right: solid 2px #F1D9C0;
+}
+.object-detail-right{
+    width: 400px;
+    padding: 30px;
+    overflow-y: auto;
+
+    h2{
+        font-family: $font-alt;
+        font-size: 40px;
+        margin-top: 0px;
+    }
+    h4{
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    p{
+        word-break: break-word;
+    }
+}
+.slider-bottom{
+    text-align: center;
+    cursor: pointer;
+    img{
+//         height: 110px;
+        height: 70px;
+        width: auto;
+        margin: 0 auto;
+        margin-bottom: 10px;
+    }
+    p{
+        margin: 0px;
+    }
+}
+.slider-nav{
+    .slick-slide{
+//         height: 220px;
+        height: 160px;
+        display: flex !important;
+        @include flex-center;
+    }
+}
+
+.slider-nav{
+    .slick-current{
+        position: relative;
+    
+        &:before{
+            content: "";
+            width: 100%;
+            height: 3px;
+            background: $red;
+            position: absolute;
+            top: 0px;
+        }
+    }
+}
+.slider-for{
+    .slick-list,
+    .slick-track,
+    .slick-slide{
+        height: 100%;
+    }
+    .slick-list .slick-track .slick-slide model-viewer{
+        width: 100%;
+        height: 100%;
+    }
+}
+@media($laptopL){
+    .object-detail-left{
+        width: 65%;
+    }
+    .object-detail-right{
+        width: 35%;
+    }
+}
+@media($laptopSM){
+    .object-detail{
+        flex-wrap: wrap;
+    }
+    .object-detail-right{border-top: solid 2px #F1D9C0;}
+    .object-detail-left{border-right: 0px;}
+    .object-detail-left,
+    .object-detail-right{
+        width: 100%;
+    }
+    .slider-detail{height: auto !important;}
+}
