@@ -71,20 +71,20 @@ sshpass -p "$SERVER_PASSWORD" rsync -avz \
   -e "sshpass -p $SERVER_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
   wp-content/themes/ $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-content/themes/
 
-# Copy production wp-config.php
-echo "⚙️  Setting up wp-config.php..."
-sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null wp-config-production.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
+# Create wp-config.php with correct credentials
+echo "⚙️  Creating wp-config.php with correct credentials..."
+DB_PASS="${DB_PASSWORD:-AVNS_XP1E14_U_JYFbqaN9l7}"
+sed "s/YOUR_DB_PASSWORD_HERE/$DB_PASS/g" wp-config-production.php > /tmp/wp-config-temp.php
+
+# Upload the corrected wp-config.php
+sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/wp-config-temp.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
+
+# Clean up temporary file
+rm -f /tmp/wp-config-temp.php
 
 # Copy production .htaccess
 echo "⚙️  Setting up .htaccess..."
 sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null .htaccess.remote $SERVER_USER@$SERVER_IP:$SERVER_PATH/.htaccess
-
-# Fix database credentials in wp-config.php
-echo "🔧 Fixing database credentials..."
-sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_IP "
-  # Fix database credentials
-  sed -i \"s/YOUR_DB_PASSWORD_HERE/\${DB_PASSWORD:-AVNS_XP1E14_U_JYFbqaN9l7}/\" $SERVER_PATH/wp-config.php
-"
 
 # Set proper permissions
 echo "🔐 Setting file permissions..."
