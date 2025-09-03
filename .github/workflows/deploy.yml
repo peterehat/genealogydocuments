@@ -39,8 +39,8 @@ jobs:
         SKIP_BACKUP: ${{ github.event.inputs.skip_backup || 'false' }}
         DEPLOY_ALL_THEMES: ${{ github.event.inputs.deploy_all_themes || 'false' }}
       run: |
-        chmod +x deploy-advanced.sh
-        ./deploy-advanced.sh
+        chmod +x deploy-simple.sh
+        ./deploy-simple.sh
         
     - name: Notify deployment status
       if: always()
