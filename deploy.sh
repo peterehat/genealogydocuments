@@ -14,6 +14,10 @@ SERVER_PASSWORD="${DO_SERVER_PASSWORD}"
 SERVER_PATH="/var/www/html"
 BACKUP_DIR="/var/backups/wordpress"
 
+# Add server to known hosts
+echo "🔑 Adding server to known hosts..."
+ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts 2>/dev/null || true
+
 # Create backup directory if it doesn't exist
 echo "📦 Creating backup directory..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "mkdir -p $BACKUP_DIR"

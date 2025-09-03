@@ -13,17 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.DO_SERVER_IP }} >> ~/.ssh/known_hosts
-        
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y rsync
+        sudo apt-get install -y rsync sshpass
         
     - name: Make deploy script executable
       run: chmod +x deploy.sh
