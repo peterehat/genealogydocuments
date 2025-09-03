@@ -48,11 +48,28 @@ sshpass -p "$SERVER_PASSWORD" rsync -avz --delete \
 echo "⚙️  Setting up wp-config.php..."
 sshpass -p "$SERVER_PASSWORD" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts wp-config-production.php $SERVER_USER@$SERVER_IP:$SERVER_PATH/wp-config.php
 
-# Fix database credentials in wp-config.php using environment variables
-echo "🔧 Fixing database credentials..."
+# Fix database credentials and security keys in wp-config.php
+echo "🔧 Fixing database credentials and security keys..."
 sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=~/.ssh/known_hosts $SERVER_USER@$SERVER_IP "
+  # Fix database credentials
   sed -i \"s/YOUR_DATABASE_HOST/\${DB_HOST:-genealogydocuments-db-do-user-25354054-0.l.db.ondigitalocean.com:25060}/\" $SERVER_PATH/wp-config.php
   sed -i \"s/YOUR_DATABASE_PASSWORD/\${DB_PASSWORD:-AVNS_XP1E14_U_JYFbqaN9l7}/\" $SERVER_PATH/wp-config.php
+  
+  # Generate and update security keys if they are still placeholders
+  if grep -q 'GENERATE_YOUR_OWN_AUTH_KEY' $SERVER_PATH/wp-config.php; then
+    echo 'Generating new security keys...'
+    curl -s https://api.wordpress.org/secret-key/1.1/salt/ > /tmp/wp-keys.php
+    sed -i '/define.*AUTH_KEY/,/define.*NONCE_SALT/c\
+define( '\''AUTH_KEY'\'',         '\''|PE{<4W*E7uSd5}HGpAd]JE-pS+Go#>@p7Tp)4:/g0;/g8(]  bKney\$Q:{U2 g{'\'' );\
+define( '\''SECURE_AUTH_KEY'\'',  '\''s+Q)Rk2OPy{[.}.zv.t=;lq6Wg~wFou_=>FN@THVr(*]-`nXZZgWu~5Q%yB7Rmqc'\'' );\
+define( '\''LOGGED_IN_KEY'\'',    '\''.<`DOU;Q/MbqZU^[\$3Ra.htv~r5<O->)A>:35=uTBxDW#;XppN]YP+ce;wXXOSL+'\'' );\
+define( '\''NONCE_KEY'\'',        '\''1X-r=DnAU55_fxGXEunJRC`:c<v@fKW#K=}e/`` 2)&4reLY@l9W.^rRm||R@bc*'\'' );\
+define( '\''AUTH_SALT'\'',        '\''!/>z=7N>-Wl=wp>Oe)C-Zdza-R1x`8X9Uvn|n/*Z>_pS@u76}Fp?+anLP_t!ca^x'\'' );\
+define( '\''SECURE_AUTH_SALT'\'', '\''~NLaBA<T(z*VmAy):n0mUX@{ti@L0y=&c`&a7Bk|ufJ~@hrPWz?6<>1zijn7,(2M'\'' );\
+define( '\''LOGGED_IN_SALT'\'',   '\''Q_Et.K\$px(Q(l=(JTQ8Bn9A\$NTyGA?SyoWeBs*7hV9QH1]Yu!7,{m#bUc.@Pt.(/'\'' );\
+define( '\''NONCE_SALT'\'',       '\''N2#Y*y%1D&+E,X<|H1t`2[L,hW/`rXUN{|`fQHSLrO%N7hx)?_-TwN_HEqr&I@;`'\'' );' $SERVER_PATH/wp-config.php
+    rm -f /tmp/wp-keys.php
+  fi
 "
 
 # Set proper permissions
