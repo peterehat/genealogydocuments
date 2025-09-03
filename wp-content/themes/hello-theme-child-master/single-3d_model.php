@@ -1,284 +1,295 @@
-<?php
-/**
- * Template Name: 3D Model Viewer (Enhanced Lighting)
- * Description: Enhanced 3D model viewer with improved lighting similar to glb.ee
- */
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
 
-get_header(); ?>
+<head>
+    <meta charset="<?php bloginfo("charset"); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="<?php echo esc_url(home_url("/")); ?>/wp-content/themes/hello-theme-child-master/assets/images/favicon.jpg">
+    <link rel="stylesheet" href="<?php echo esc_url(home_url("/")); ?>/wp-content/themes/hello-theme-child-master/assets/dist/main.min.css">
+    <title><?php wp_title(""); ?></title>
+</head>
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-        font-family: Arial, sans-serif;
-    }
-
-    .header-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px 0;
-        text-align: center;
-    }
-
-    .header-section h1 {
-        margin: 0;
-        font-size: 2.5em;
-        font-weight: 300;
-    }
-
-    .header-section p {
-        margin: 10px 0 0 0;
-        font-size: 1.1em;
-        opacity: 0.9;
-    }
-
-    .content-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .model-container {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        overflow: hidden;
-        margin-bottom: 30px;
-    }
-
-    .model-header {
-        padding: 20px;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .model-header h2 {
-        margin: 0;
-        color: #333;
-        font-size: 1.8em;
-    }
-
-    .back-button {
-        background: #667eea;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        text-decoration: none;
-        transition: background 0.3s ease;
-    }
-
-    .back-button:hover {
-        background: #5a6fd8;
-    }
-
-    .model-viewer {
-        position: relative;
-        width: 100%;
-        height: 70vh;
-        min-height: 500px;
-        background: #fafafa;
-    }
-
-    #threejs-container {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    #threejs-container canvas {
-        display: block;
-        background-color: white;
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    #loader {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        z-index: 1000;
-    }
-
-    .model-info {
-        padding: 30px;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
-    }
-
-    .model-info h3 {
-        color: #333;
-        margin-bottom: 15px;
-        font-size: 1.5em;
-    }
-
-    .model-info p {
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 15px;
-    }
-
-    .provenance {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid #667eea;
-    }
-
-    .provenance h4 {
-        margin: 0 0 10px 0;
-        color: #333;
-    }
-
-    .provenance p {
-        margin: 0;
-        color: #666;
-    }
-
-    .related-models {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        padding: 20px;
-    }
-
-    .related-models h3 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 1.5em;
-    }
-
-    .slider-nav {
-        display: none;
-    }
-
-    .slider-nav .slick-slide {
-        padding: 0 10px;
-    }
-
-    .slider-nav .slick-slide img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 8px;
-        transition: transform 0.3s ease;
-    }
-
-    .slider-nav .slick-slide:hover img {
-        transform: scale(1.05);
-    }
-
-    .slick-prev, .slick-next {
-        background: #667eea;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        z-index: 10;
-    }
-
-    .slick-prev:before, .slick-next:before {
-        color: white;
-        font-size: 18px;
-    }
-
-    @media (max-width: 768px) {
-        .content-wrapper {
-            padding: 10px;
+<body>
+    <style>
+        model-viewer {
+            --progress-bar-color: red;
         }
-        
-        .model-viewer {
-            height: 50vh;
-            min-height: 300px;
-        }
-        
-        .header-section h1 {
-            font-size: 2em;
-        }
-        
-        .model-header {
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-        }
-    }
-</style>
 
-<section class="header-section">
-    <div class="content-wrapper">
-        <h1>3D Model Viewer</h1>
-        <p>Interactive three-dimensional scans of genealogy artifacts</p>
-    </div>
-</section>
+        .slider-nav {
+            padding: 0px 58px;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
 
-<section class="content-wrapper">
-    <div class="model-container">
-        <div class="model-header">
-            <h2><?php the_title(); ?></h2>
-            <a href="<?php echo home_url('/three-dimensional-scans/'); ?>" class="back-button">← Back to Gallery</a>
-        </div>
-        
-        <div class="model-viewer">
-            <div id="threejs-container"></div>
-        </div>
-    </div>
+        .slider-nav>.slick-slider {
+            min-width: calc(100% / 4) !important;
+            display: flex;
+            align-items: center;
+        }
 
-    <div class="model-info">
-        <h3><?php the_title(); ?></h3>
-        <?php if (get_field('description')): ?>
-            <p><?php echo get_field('description'); ?></p>
-        <?php endif; ?>
-        
-        <?php if (get_field('provenance')): ?>
-            <div class="provenance">
-                <h4>Provenance</h4>
-                <p><?php echo get_field('provenance'); ?></p>
+        .a-left {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .a-right {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .slider-detail {
+            height: auto !important;
+        }
+
+        .header-box {
+            padding: 13px 20px;
+            position: relative;
+            z-index: 999999;
+        }
+
+        .header-box .header-logo {
+            width: 170px;
+        }
+
+        .object-detail {
+            height: calc(100vh - 63px);
+        }
+
+        .object-detail-left {
+            width: calc(100% - 400px) !important;
+            border-right: 0;
+            overflow: hidden;
+        }
+
+        .object-detail-right {
+            width: 400px !important;
+            border-left: solid 2px #f1d9c0;
+            padding: 0px;
+            overflow-y: hidden;
+        }
+
+        .slider.slider-for.slider-detail {
+            padding: 15px;
+            height: calc(100vh - 112px) !important;
+            margin-top: 14px;
+            overflow: auto;
+        }
+
+        #threejs-container {
+            width: 100%;
+            height: calc(100vh - 282px);
+            position: relative;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        #threejs-container canvas {
+            display: block;
+            background-color: white;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .slider-bottom a {
+            height: 110px;
+            width: auto;
+            display: block;
+            padding-bottom: 15px;
+        }
+
+        .slider-bottom a img {
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            transition: transform 0.3s ease;
+        }
+
+        .slider-bottom:hover a img {
+            transform: scale(1.1);
+        }
+        .object-detail-right h2{
+            font-size:30px;
+        }
+        .object-detail-right h4 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            margin-top: 10px;
+        }
+        .slider.slider-nav.desktop {
+            display: block;
+        }
+        .slider.slider-nav.mobile {
+            display: none;
+        }
+
+        @media screen and (max-width: 1024px) {
+
+            .slider.slider-nav.desktop {
+                display: none;
+            }
+            .slider.slider-nav.mobile {
+                display: block;
+            }
+            .object-detail-left {
+                width: 100% !important;
+            }
+
+            /* #threejs-container {
+                height: 100%;
+            } */
+            /* 
+            #threejs-container canvas {
+                height: 650px !important;
+            } */
+
+            .object-detail-right {
+                border-top: solid 2px #f1d9c0;
+                position: absolute;
+                top: 75%;
+                background-color: #fff;
+                right: 0;
+                left: 0;
+                width: 100% !important;
+            }
+
+            .slider.slider-for.slider-detail {
+                overflow: unset;
+            }
+        }
+
+        .slider-detail a {
+            color: #df2f2f;
+        }
+
+        @media(max-width:1024px) {
+            .slider-detail .slick-slide {
+                max-height: auto;
+            }
+
+            #threejs-container {
+                width: 100%;
+                /* height: calc(85vh - 282px); */
+                height: 85vh;
+                position: relative;
+                overflow: hidden;
+                background-color: white;
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .object-detail{
+                flex-wrap:wrap;
+                height: auto;
+            }
+            .object-detail-right {
+                border-top: solid 2px #f1d9c0;
+            }
+            .slider.slider-for.slider-detail {
+                overflow: unset;
+                height: auto !important;
+            }
+        }
+    </style>
+    <header class="header-box">
+        <div><a href="<?php echo esc_url(home_url("/")); ?>"><img class="header-logo"src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/Logo.svg" /></a></div>
+        <div><a href="/three-dimensional-scans/" class="back-link"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/arrow.svg" />Back</a></div>
+    </header>
+    <section class="object-detail">
+        <div class="object-detail-left">
+            <div class="main">
+                <div class="">
+                    <div id="threejs-container"></div>
+                    <?php
+                        $args = [
+                            "post_type"      => "3d_model",
+                            "posts_per_page" => -1,
+                            "order"          => "ASC",
+                            "post_status"    => "publish",
+                        ];
+                        $models_query = new WP_Query($args);
+                        $current_post_id = get_the_ID();
+                    ?>
+                    <div class="slider slider-nav desktop" style="visibility:hidden;">
+                        <?php if ($models_query->have_posts()): ?>
+                            <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
+                                <?php 
+                                    $post_id = get_the_ID();
+                                    $active_class = ($post_id == $current_post_id) ? ' current-slick' : ''; 
+                                ?>
+                                <div class="slick-slider<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
+                                    <div class="slider-bottom">
+                                        <?php if (has_post_thumbnail()): ?>
+                                            <a href="<?php the_permalink(); ?>">
+                                                <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "full")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
+                                            </a>
+                                        <?php endif; ?>
+                                        <p><?php the_title(); ?></p>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                            <?php wp_reset_postdata(); ?>
+                        <?php endif; ?>
             </div>
-        <?php endif; ?>
-    </div>
-
-    <?php
-    // Get related 3D models
-    $related_models = get_posts(array(
-        'post_type' => '3d_model',
-        'posts_per_page' => 8,
-        'post__not_in' => array(get_the_ID()),
-        'meta_query' => array(
-            array(
-                'key' => 'upload_three_dimensional_scans',
-                'compare' => 'EXISTS'
-            )
-        )
-    ));
-
-    if ($related_models): ?>
-        <div class="related-models">
-            <h3>Related 3D Models</h3>
-            <div class="slider-nav">
-                <?php foreach ($related_models as $model): ?>
-                    <div>
-                        <a href="<?php echo get_permalink($model->ID); ?>">
-                            <?php if (get_field('thumbnail_image', $model->ID)): ?>
-                                <img src="<?php echo get_field('thumbnail_image', $model->ID); ?>" alt="<?php echo get_the_title($model->ID); ?>">
-                            <?php else: ?>
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/placeholder-3d.jpg" alt="<?php echo get_the_title($model->ID); ?>">
-                            <?php endif; ?>
-                        </a>
+                </div>
+            </div>
+        </div>
+        <div class="object-detail-right">
+            <?php
+                $args = [
+                    "post_type"      => "3d_model",
+                    "posts_per_page" => -1,
+                    "order"          => "ASC",
+                    "post_status"    => "publish",
+                ];
+                $models_query = new WP_Query($args);
+                $current_post_id = get_the_ID();
+            ?>
+            <div class="slider slider-nav mobile" style="visibility:hidden;">
+                <?php if ($models_query->have_posts()): ?>
+                    <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
+                        <?php 
+                            $post_id = get_the_ID();
+                            $active_class = ($post_id == $current_post_id) ? ' current-slick' : ''; 
+                        ?>
+                        <div class="slick-slider<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
+                            <div class="slider-bottom">
+                                <?php if (has_post_thumbnail()): ?>
+                                    <a href="<?php the_permalink(); ?>">
+                                        <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "full")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
+                                    </a>
+                                <?php endif; ?>
+                                <p><?php the_title(); ?></p>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                    <?php wp_reset_postdata(); ?>
+                <?php endif; ?>
+            </div>
+            <div class="slider slider-for slider-detail">
+                <div>
+                    <h2><?php the_title(); ?></h2>
+                    <div class="content-scroll">
+                        <?php if (have_rows("three_dimensional_object_details_section")): ?>
+                        <?php while (have_rows("three_dimensional_object_details_section")): the_row(); ?>
+                            <div>
+                                <h4><?php the_sub_field("three_dimensional_object_details_sub_title"); ?></h4>
+                                <p><?php the_sub_field("three_dimensional_object_details_sub_detail"); ?></p>
+                            </div>
+                        <?php endwhile; ?>
+                        <?php endif; ?>
                     </div>
-                <?php endforeach; ?>
+                </div>
             </div>
         </div>
-    <?php endif; ?>
-</section>
+    </section>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -357,7 +368,7 @@ get_header(); ?>
         camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 0, 2); // Adjust camera closer
 
-        // Create Renderer with Enhanced Settings
+        // Create Renderer
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0xffffff, 1);
