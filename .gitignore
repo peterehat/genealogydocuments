@@ -42,7 +42,6 @@ npm-debug.log
 yarn-error.log
 
 # Build files
-dist/
 build/
 
 # Environment files
