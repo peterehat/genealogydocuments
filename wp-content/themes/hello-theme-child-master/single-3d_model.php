@@ -200,7 +200,7 @@
     </style>
     <header class="header-box">
         <div><a href="<?php echo esc_url(home_url("/")); ?>"><img class="header-logo"src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/Logo.svg" /></a></div>
-        <div><a href="/three-dimensional-scans/" class="back-link"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/arrow.svg" />Back</a></div>
+        <div><a href="<?php echo esc_url(home_url('/three-dimensional-scans/')); ?>" class="back-link"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/arrow.svg" />Back</a></div>
     </header>
     <section class="object-detail">
         <div class="object-detail-left">
@@ -379,11 +379,11 @@
                 src="${modelUrl}"
                 alt="3D Model"
                 auto-rotate
+                shadow-intensity="1.5"
+                tone-mapping="Reinhard"
                 camera-controls
-                shadow-intensity="0"
-                exposure="1.8"
-                tone-mapping="neutral"
-                style="width: 100%; height: 100%; background-color: #f3f5f6;">
+                touch-action="pan-y"
+                style="width: 100%; height: 100%; background-color: #fafafa;">
                 
                 <!-- Loading indicator -->
                 <div class="loading" slot="progress-bar">
@@ -531,7 +531,7 @@
             
             .loading-bar {
                 height: 100%;
-                background: linear-gradient(90deg, #007bff, #0056b3);
+                background: #df2f2f;
                 border-radius: 2px;
                 animation: loading 2s ease-in-out infinite;
             }
