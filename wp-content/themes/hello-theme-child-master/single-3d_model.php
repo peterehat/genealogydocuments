@@ -132,8 +132,28 @@
             padding-bottom: 15px;
         }
 
+        /* Desktop carousel - show only on desktop */
+        .slider-nav.desktop {
+            display: block;
+        }
+        
+        /* Mobile carousel - hide on desktop */
+        .slider-nav.mobile {
+            display: none;
+        }
+        
+        /* Simple mobile carousel - hide on desktop */
+        .simple-mobile-carousel {
+            display: none;
+        }
+
         /* Mobile carousel optimizations */
         @media screen and (max-width: 1024px) {
+            /* Hide desktop carousel on mobile */
+            .slider-nav.desktop {
+                display: none !important;
+            }
+            
             .slider-bottom a {
                 height: 50px !important;
                 width: 50px !important;
@@ -158,6 +178,11 @@
                 z-index: 10;
                 margin: 0;
                 min-height: 70px !important;
+            }
+            
+            /* Show mobile carousel on mobile */
+            .simple-mobile-carousel {
+                display: flex !important;
             }
             
             .slider-nav.mobile .swiper-slide {
