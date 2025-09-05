@@ -17,29 +17,59 @@
 
         .slider-nav {
             padding: 0px 58px;
-            display: flex;
-            flex-direction: row;
-            overflow: hidden;
+            position: relative;
         }
 
-        .slider-nav>.slick-slider {
-            min-width: calc(100% / 4) !important;
+        .slider-nav .swiper-slide {
             display: flex;
             align-items: center;
+            justify-content: center;
+        }
+
+        /* Hide Swiper's default navigation buttons */
+        .swiper-button-next,
+        .swiper-button-prev {
+            display: none !important;
         }
 
         .a-left {
             position: absolute;
-            left: 10px;
+            left: 5px;
             top: 50%;
             transform: translateY(-50%);
+            background: #df2f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .a-right {
             position: absolute;
-            right: 10px;
+            right: 5px;
             top: 50%;
             transform: translateY(-50%);
+            background: #df2f2f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .slider-detail {
@@ -102,6 +132,245 @@
             padding-bottom: 15px;
         }
 
+        /* Mobile carousel optimizations */
+        @media screen and (max-width: 1024px) {
+            .slider-bottom a {
+                height: 50px !important;
+                width: 50px !important;
+                padding-bottom: 4px;
+                margin: 0 auto;
+            }
+            
+            .slider-bottom p {
+                display: none;
+            }
+            
+            .slider-nav.mobile {
+                padding: 4px 8px;
+                max-height: 70px !important;
+                display: flex !important;
+                align-items: center !important;
+                visibility: visible !important;
+                position: relative;
+                background-color: #f9f9f9;
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                z-index: 10;
+                margin: 0;
+                min-height: 70px !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide {
+                padding: 0 2px !important;
+                width: 60px !important;
+                height: 60px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .swiper-wrapper {
+                display: flex !important;
+                align-items: flex-end !important;
+                justify-content: center !important;
+                height: 60px !important;
+                visibility: visible !important;
+                padding-bottom: 5px;
+            }
+            
+            .slider-nav.mobile .slider-bottom {
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .slider-bottom a {
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .slider-bottom img {
+                visibility: visible !important;
+                display: block !important;
+            }
+            
+            /* Clean mobile carousel styling */
+            .slider-nav.mobile {
+                min-height: 80px !important;
+            }
+            
+            /* Prevent Swiper from hiding slides - more aggressive */
+            .slider-nav.mobile .swiper-slide.swiper-slide-hidden {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide.swiper-slide-duplicate {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide[style*="display: none"] {
+                display: flex !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide[style*="visibility: hidden"] {
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide[style*="opacity: 0"] {
+                opacity: 1 !important;
+            }
+            
+            /* Override any Swiper inline styles */
+            .slider-nav.mobile .swiper-slide[style] {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            /* More aggressive overrides for all possible Swiper states */
+            .slider-nav.mobile .swiper-slide,
+            .slider-nav.mobile .swiper-slide.swiper-slide-active,
+            .slider-nav.mobile .swiper-slide.swiper-slide-next,
+            .slider-nav.mobile .swiper-slide.swiper-slide-prev,
+            .slider-nav.mobile .swiper-slide.swiper-slide-duplicate,
+            .slider-nav.mobile .swiper-slide.swiper-slide-duplicate-active,
+            .slider-nav.mobile .swiper-slide.swiper-slide-duplicate-next,
+            .slider-nav.mobile .swiper-slide.swiper-slide-duplicate-prev {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+
+        /* Simple Mobile Carousel - Clean Implementation */
+        @media screen and (max-width: 1024px) {
+            .simple-mobile-carousel {
+                display: flex;
+                align-items: center;
+                position: relative;
+                background-color: #f9f9f9;
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                padding: 8px 50px;
+                height: 70px;
+                overflow: hidden;
+            }
+            
+            .carousel-container {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                flex: 1;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .carousel-container::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .carousel-item {
+                flex-shrink: 0;
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .carousel-item a {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+            
+            .carousel-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+            
+            .carousel-item.current-item {
+                border: 2px solid #df2f2f;
+                border-radius: 4px;
+            }
+            
+            .carousel-prev,
+            .carousel-next {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: #df2f2f;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+                cursor: pointer;
+                z-index: 10;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .carousel-prev {
+                left: 8px;
+            }
+            
+            .carousel-next {
+                right: 8px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media screen and (max-width: 480px) {
+            .slider-bottom a {
+                height: 45px !important;
+                width: 45px !important;
+                padding-bottom: 3px;
+                margin: 0 auto;
+            }
+            
+            .slider-bottom p {
+                display: none;
+            }
+            
+            .slider-nav.mobile {
+                padding: 3px 6px;
+                max-height: 60px !important;
+                display: flex !important;
+                align-items: center !important;
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .swiper-slide {
+                padding: 0 1px !important;
+                width: 50px !important;
+                height: 50px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                visibility: visible !important;
+            }
+            
+            .slider-nav.mobile .swiper-wrapper {
+                display: flex !important;
+                align-items: flex-end !important;
+                justify-content: center !important;
+                height: 50px !important;
+                visibility: visible !important;
+                padding-bottom: 3px;
+            }
+        }
+
         .slider-bottom a img {
             margin: 0 auto;
             width: 100%;
@@ -122,20 +391,21 @@
             margin-bottom: 6px;
             margin-top: 10px;
         }
-        .slider.slider-nav.desktop {
+        .slider-nav.desktop {
             display: block;
         }
-        .slider.slider-nav.mobile {
+        .slider-nav.mobile {
             display: none;
         }
 
         @media screen and (max-width: 1024px) {
 
-            .slider.slider-nav.desktop {
-                display: none;
+            .slider-nav.desktop {
+                display: none !important;
             }
-            .slider.slider-nav.mobile {
-                display: block;
+            .slider-nav.mobile {
+                display: block !important;
+                visibility: visible !important;
             }
             .object-detail-left {
                 width: 100% !important;
@@ -151,12 +421,13 @@
 
             .object-detail-right {
                 border-top: solid 2px #f1d9c0;
-                position: absolute;
-                top: 75%;
+                position: relative;
                 background-color: #fff;
-                right: 0;
-                left: 0;
                 width: 100% !important;
+                max-height: calc(100vh - 60vh);
+                overflow-y: auto;
+                margin-top: 0;
+                margin-bottom: 0;
             }
 
             .slider.slider-for.slider-detail {
@@ -175,15 +446,11 @@
 
             #threejs-container {
                 width: 100%;
-                /* height: calc(85vh - 282px); */
-                height: 85vh;
+                height: calc(100vh - 180px);
                 position: relative;
                 overflow: hidden;
                 background-color: white;
-                position: absolute;
-                top: 40%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+                margin-bottom: 0;
             }
             .object-detail{
                 flex-wrap:wrap;
@@ -217,27 +484,31 @@
                         $models_query = new WP_Query($args);
                         $current_post_id = get_the_ID();
                     ?>
-                    <div class="slider slider-nav desktop" style="visibility:hidden;">
-                        <?php if ($models_query->have_posts()): ?>
-                            <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
-                                <?php 
-                                    $post_id = get_the_ID();
-                                    $active_class = ($post_id == $current_post_id) ? ' current-slick' : ''; 
-                                ?>
-                                <div class="slick-slider<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
-                                    <div class="slider-bottom">
-                                        <?php if (has_post_thumbnail()): ?>
-                                            <a href="<?php the_permalink(); ?>">
-                                                <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "full")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
-                                            </a>
-                                        <?php endif; ?>
-                                        <p><?php the_title(); ?></p>
+                    <div class="swiper slider-nav desktop" style="visibility:hidden;">
+                        <div class="swiper-wrapper">
+                            <?php if ($models_query->have_posts()): ?>
+                                <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
+                                    <?php 
+                                        $post_id = get_the_ID();
+                                        $active_class = ($post_id == $current_post_id) ? ' current-slick' : ''; 
+                                    ?>
+                                    <div class="swiper-slide<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
+                                        <div class="slider-bottom">
+                                            <?php if (has_post_thumbnail()): ?>
+                                                <a href="<?php the_permalink(); ?>">
+                                                    <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "full")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
+                                                </a>
+                                            <?php endif; ?>
+                                            <p><?php the_title(); ?></p>
+                                        </div>
                                     </div>
-                                </div>
-                            <?php endwhile; ?>
-                            <?php wp_reset_postdata(); ?>
-                        <?php endif; ?>
-            </div>
+                                <?php endwhile; ?>
+                                <?php wp_reset_postdata(); ?>
+                            <?php endif; ?>
+                        </div>
+                        <button class="a-left control-c prev">←</button>
+                        <button class="a-right control-c next">→</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -252,26 +523,27 @@
                 $models_query = new WP_Query($args);
                 $current_post_id = get_the_ID();
             ?>
-            <div class="slider slider-nav mobile" style="visibility:hidden;">
-                <?php if ($models_query->have_posts()): ?>
-                    <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
-                        <?php 
-                            $post_id = get_the_ID();
-                            $active_class = ($post_id == $current_post_id) ? ' current-slick' : ''; 
-                        ?>
-                        <div class="slick-slider<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
-                            <div class="slider-bottom">
+            <div class="simple-mobile-carousel" style="visibility:hidden;">
+                <div class="carousel-container">
+                    <?php if ($models_query->have_posts()): ?>
+                        <?php while ($models_query->have_posts()): $models_query->the_post(); ?>
+                            <?php 
+                                $post_id = get_the_ID();
+                                $active_class = ($post_id == $current_post_id) ? ' current-item' : ''; 
+                            ?>
+                            <div class="carousel-item<?php echo esc_attr($active_class); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
                                 <?php if (has_post_thumbnail()): ?>
                                     <a href="<?php the_permalink(); ?>">
-                                        <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "full")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
+                                        <img src="<?php echo esc_url(get_the_post_thumbnail_url(null, "medium")); ?>" alt="<?php echo esc_attr(get_the_title()); ?>" />
                                     </a>
                                 <?php endif; ?>
-                                <p><?php the_title(); ?></p>
                             </div>
-                        </div>
-                    <?php endwhile; ?>
-                    <?php wp_reset_postdata(); ?>
-                <?php endif; ?>
+                        <?php endwhile; ?>
+                        <?php wp_reset_postdata(); ?>
+                    <?php endif; ?>
+                </div>
+                <button class="carousel-prev">←</button>
+                <button class="carousel-next">→</button>
             </div>
             <div class="slider slider-for slider-detail">
                 <div>
@@ -297,43 +569,91 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
-    jQuery(document).ready(function($) {
-        setTimeout(function() {  
-            $('.slider-nav').css('visibility', 'visible');  
-        }, 500);  
-        
-        var $slider = $('.slider-nav');
-        
-        // Initialize the slick slider
-        $slider.slick({
-            slidesToShow: 4,
-            slidesToScroll: 1,
-            dots: false,
-            focusOnSelect: true,
-            infinite: false,
-            prevArrow: "<button class='a-left control-c prev slick-prev'></button>",
-            nextArrow: "<button class='a-right control-c next slick-next'></button>",
-            responsive: [
-                {
-                    breakpoint: 1025,
-                    settings: {
-                        slidesToShow: 2,
-                    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Swiper for desktop
+        const desktopSwiper = new Swiper('.slider-nav.desktop', {
+            slidesPerView: 4,
+            spaceBetween: 10,
+            navigation: false,
+            breakpoints: {
+                1025: {
+                    slidesPerView: 3,
                 },
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1
-                    }
+                768: {
+                    slidesPerView: 4,
+                },
+                480: {
+                    slidesPerView: 3,
                 }
-            ]
-        }).on('init', function() {
-            // Show the slider after initialization
-            $slider.css('display', 'block');
+            }
+        });
+
+        // Simple mobile carousel functionality
+        function initSimpleCarousel() {
+            const carousel = document.querySelector('.simple-mobile-carousel');
+            const container = carousel?.querySelector('.carousel-container');
+            const prevBtn = carousel?.querySelector('.carousel-prev');
+            const nextBtn = carousel?.querySelector('.carousel-next');
+            
+            if (!carousel || !container || !prevBtn || !nextBtn) {
+                console.log('Simple carousel elements not found');
+                return;
+            }
+            
+            console.log('Initializing simple carousel');
+            carousel.style.visibility = 'visible';
+            
+            // Center current item
+            const currentItem = container.querySelector('.current-item');
+            if (currentItem) {
+                currentItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            
+            // Navigation
+            prevBtn.addEventListener('click', () => {
+                container.scrollBy({ left: -70, behavior: 'smooth' });
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                container.scrollBy({ left: 70, behavior: 'smooth' });
+            });
+        }
+
+        // Initialize everything
+        setTimeout(() => {
+            // Show desktop carousel
+            const desktopCarousel = document.querySelector('.slider-nav.desktop');
+            if (desktopCarousel) {
+                desktopCarousel.style.visibility = 'visible';
+            }
+            
+            // Initialize simple mobile carousel
+            initSimpleCarousel();
+        }, 500);
+
+        // Add custom navigation functionality
+        document.querySelectorAll('.a-left').forEach(button => {
+            button.addEventListener('click', function() {
+                const swiper = this.closest('.slider-nav').swiper;
+                if (swiper) {
+                    swiper.slidePrev();
+                }
+            });
+        });
+
+        document.querySelectorAll('.a-right').forEach(button => {
+            button.addEventListener('click', function() {
+                const swiper = this.closest('.slider-nav').swiper;
+                if (swiper) {
+                    swiper.slideNext();
+                }
+            });
         });
     });
 
@@ -383,6 +703,8 @@
                 tone-mapping="Reinhard"
                 camera-controls
                 touch-action="pan-y"
+                camera-orbit="0deg 85deg 7.5m"
+                field-of-view="30deg"
                 style="width: 100%; height: 100%; background-color: #fafafa;">
                 
                 <!-- Loading indicator -->
