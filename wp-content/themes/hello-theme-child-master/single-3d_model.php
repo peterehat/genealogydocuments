@@ -656,6 +656,16 @@
             const desktopCarousel = document.querySelector('.slider-nav.desktop');
             if (desktopCarousel) {
                 desktopCarousel.style.visibility = 'visible';
+                
+                // Center current model in desktop carousel
+                const currentPostId = <?php echo json_encode(get_the_ID()); ?>;
+                const currentSlide = desktopCarousel.querySelector(`[data-post-id="${currentPostId}"]`);
+                if (currentSlide && desktopSwiper) {
+                    const slideIndex = Array.from(desktopCarousel.querySelectorAll('.swiper-slide')).indexOf(currentSlide);
+                    if (slideIndex >= 0) {
+                        desktopSwiper.slideTo(slideIndex, 0); // 0 = no animation
+                    }
+                }
             }
             
             // Initialize simple mobile carousel
